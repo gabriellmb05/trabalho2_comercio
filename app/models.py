@@ -20,4 +20,4 @@ class Rating(models.Model):
     rating = models.FloatField()
 
     def __str__(self):
-        return str(self.userId)+" "+str(self.movieid)
+        return str(self.userid)+" "+str(self.movieid)
