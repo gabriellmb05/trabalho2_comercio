@@ -88,3 +88,4 @@ def get_prediction(user_id,movie_id):
 def prediction_test(request):
 	print(get_prediction(1,3671))
 	return HttpResponse(get_prediction(1,3671))		
+

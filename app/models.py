@@ -21,3 +21,19 @@ class Rating(models.Model):
 
     def __str__(self):
         return str(self.userid)+" "+str(self.movieid)
+
+    def get_list_users():
+        list_users = []
+        for rating in Rating.objects.all():
+            user = rating.userid
+            if(user not in list_users):
+                list_users.append(user)                
+        return list_users    
+
+class Recomendation(models.Model):
+    userid = models.ForeignKey(User, related_name='user_prediction_fk')
+    movieid =models.ForeignKey(Movie, related_name='movie_prediction_fk') 
+    prediction_rating = models.FloatField()
+
+    def __str__(self):
+        return str(self.userid)+" "+str(self.movieid)
