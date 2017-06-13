@@ -89,3 +89,7 @@ def prediction_test(request):
 	print(get_prediction(1,3671))
 	return HttpResponse(get_prediction(1,3671))		
 
+#def pre_process_predictions():
+#	users_that_rated_movies = Rating.get_list_users()
+#	for user in users_that_rated_movies:
+#		pass	
