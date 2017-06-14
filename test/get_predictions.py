@@ -1,4 +1,4 @@
 from app.views import *
 
-pred = get_prediction(1,10)
+pred = get_prediction(2,26)
 print(pred)
