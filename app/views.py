@@ -89,7 +89,13 @@ def prediction_test(request):
 	print(get_prediction(1,3671))
 	return HttpResponse(get_prediction(1,3671))		
 
-#def pre_process_predictions():
-#	users_that_rated_movies = Rating.get_list_users()
-#	for user in users_that_rated_movies:
-#		pass	
+def pre_process_predictions():
+	users_that_rated_movies = Rating.get_list_users()
+	rating = Rating()
+	for user in users_that_rated_movies:
+		unwatched_movies = rating.get_unwatched_movies(user.userid)
+		for movie_id in unwatched_movies:
+			prediction = get_prediction(user.userid,movie_id)
+			movie = Movie.objects.get(movieid=movie_id)
+			recommendation = Recommendation(userid=user,movieid=movie,prediction_rating=prediction)
+			recommendation.save()	

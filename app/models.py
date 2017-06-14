@@ -42,7 +42,7 @@ class Rating(models.Model):
         return list_unwatched_movies
 
 
-class Recomendation(models.Model):
+class Recommendation(models.Model):
     userid = models.ForeignKey(User, related_name='user_prediction_fk')
     movieid =models.ForeignKey(Movie, related_name='movie_prediction_fk') 
     prediction_rating = models.FloatField()
