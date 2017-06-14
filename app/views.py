@@ -110,8 +110,11 @@ def get_prediction(user_id,movie_id):
 			rating_differences += (similarity_a_b * (get_rating(user_b.userid,movie_id)- avg_rating_user_b))
 			similarities_sum += similarity_a_b
 		movies_a = 	Rating.objects.filter(userid=user_a.userid)
-		avg_rating_user_a=get_avg_movie(user_a, movies_a)		
-		prediction = avg_rating_user_a + (rating_differences/similarities_sum)
+		avg_rating_user_a=get_avg_movie(user_a, movies_a)
+		if(similarities_sum !=0 ):		
+			prediction = avg_rating_user_a + (rating_differences/similarities_sum)
+		else:
+		 	prediction = 0	
 		return prediction
 	else:
 		print("O usuário já viu o filme escolhido, por favor escolha outro.")
