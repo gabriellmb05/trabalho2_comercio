@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Filmes recomendados para o usuário{% endblock %}
+
+{% block content %}
+    <div id="content-container" class="container">
+            <form id="atividade-form" method="post"
+                  action="{% url 'recommendation_view' %}">
+                {% csrf_token %}
+                <h2>Filmes recomendados para o usuário</h4>
+                <br/><br/>
+                    <div class="form-group">
+                        {{form.as_p}}                       
+                    </div>
+                    <div class="row">
+                        <div class="input-field">
+                            <button class="btn right orange darken-4" type="submit" name="submit">Buscar</button>
+                            <input type="hidden" name="next" value="/" />
+                        </div>
+                    </div>
+            </form>        
+    </div>
+{% endblock content %}
