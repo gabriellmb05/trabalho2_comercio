@@ -48,4 +48,11 @@ class Recommendation(models.Model):
     prediction_rating = models.FloatField()
 
     def __str__(self):
-        return str(self.userid)+" "+str(self.movieid)   
+        return str(self.userid)+" "+str(self.movieid)  
+
+    def avg_recommendation(self):
+        ratings_sum=0      
+        recommendations = Recommendation.objects.all()    
+        for recommendation in recommendations:
+            ratings_sum += recommendation.prediction_rating
+        return ratings_sum/len(recommendations)
