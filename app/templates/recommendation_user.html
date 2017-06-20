@@ -3,7 +3,7 @@
 
 {% block content %}
     <div id="content-container" class="container">
-            <form id="atividade-form" method="post"
+            <form id="user-form" method="post"
                   action="{% url 'recommendation_view' %}">
                 {% csrf_token %}
                 <h2>Filmes recomendados para o usuário</h4>
@@ -17,6 +17,7 @@
                             <input type="hidden" name="next" value="/" />
                         </div>
                     </div>
-            </form>        
+                    
+            </form>                 
     </div>
 {% endblock content %}

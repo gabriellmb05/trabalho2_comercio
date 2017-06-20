@@ -3,6 +3,8 @@
 
 {% block content %}
     <div id="content-container" class="container">
-                
+          {% for recommendation in recommendations %}
+          		<p>{{recomendation.moveid.title}}</p>			
+          {% endfor %}      
     </div>
 {% endblock content %}

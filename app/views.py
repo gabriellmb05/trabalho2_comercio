@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import *
 from django.http import HttpResponse
 from math import pow,sqrt
@@ -136,17 +136,22 @@ def pre_process_predictions():
 			recommendation.save()	
 
 def get_recommendation(userobj):
-	recommendations =list(Recommendation.objects.filter(userid=userobj.userid).order_by('-prediction_rating'))
-	for rec in recommendations:
-		print(rec.prediction_rating)
+	avg_recommendation = Recommendation.avg_recommendation()
+	recommendations =list(Recommendation.objects.filter(userid=userobj.userid, prediction_rating__gte=avg_recommendation).order_by('-prediction_rating'))
+
+	return recommendations	
 
 def recommendation_view(request):
+	recommended_movies=[]
 	if request.method == "POST":
 		form = FormUser(request.POST)
 		if form.is_valid():
 			user = form.cleaned_data['name']
-			get_recommendation(user)
-			
+			recommended_movies = get_recommendation(user)			
+			return redirect('recommended_movies_user', {'recommendations':recommended_movies})
 	else:
 		form = FormUser()
 	return render(request, 'recommendation_user.html',{'form': form})
+
+def recommended_movies_user(request):	
+	return render(request, 'recommended_movies_user.html')

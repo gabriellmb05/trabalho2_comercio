@@ -50,7 +50,7 @@ class Recommendation(models.Model):
     def __str__(self):
         return str(self.userid)+" "+str(self.movieid)  
 
-    def avg_recommendation(self):
+    def avg_recommendation():
         ratings_sum=0      
         recommendations = Recommendation.objects.all()    
         for recommendation in recommendations:
