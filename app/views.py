@@ -148,7 +148,7 @@ def recommendation_view(request):
 		if form.is_valid():
 			user = form.cleaned_data['name']
 			recommended_movies = get_recommendation(user)
-			return render(request, 'recommended_movies.html', {'recommendations':recommended_movies})
+			return render(request, 'recommended_movies.html', {'user':user,'recommendations':recommended_movies})
 	else:
 		form = FormUser()
 	return render(request, 'recommendation_user.html',{'form': form})

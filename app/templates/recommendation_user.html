@@ -3,6 +3,11 @@
 
 {% block content %}
     <div id="content-container" class="container">
+            <form id="movie-form" method="post"
+                  action="{% url 'recommendation_view' %}"></form>
+                  {% csrf_token %}
+                  
+            <hr>
             <form id="user-form" method="post"
                   action="{% url 'recommendation_view' %}">
                 {% csrf_token %}

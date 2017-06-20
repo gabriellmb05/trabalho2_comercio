@@ -3,10 +3,13 @@
 
 {% block content %}
     <div id="content-container" class="container">
+    	  <h2>Filmes recomendados para {{user}}</h2>
+    	  <br><br>	
+    	  <button class="btn btn-success"><a href="/">Voltar</a></button>
           {% for recommendation in recommendations %}
                 <p>{{recommendation}}</p>
           {% endfor %}
 
-          <a href="/">Voltar</a>
+          
     </div>
 {% endblock content %}
