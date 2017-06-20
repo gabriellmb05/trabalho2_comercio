@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import *
 from django.http import HttpResponse
 from math import pow,sqrt
+from .forms import *
 
 
 
@@ -133,3 +134,19 @@ def pre_process_predictions():
 			movie = Movie.objects.get(movieid=movie_id)
 			recommendation = Recommendation(userid=user,movieid=movie,prediction_rating=prediction)
 			recommendation.save()	
+
+def get_recommendation(userobj):
+	recommendations =list(Recommendation.objects.filter(userid=userobj.userid).order_by('-prediction_rating'))
+	for rec in recommendations:
+		print(rec.prediction_rating)
+
+def recommendation_view(request):
+	if request.method == "POST":
+		form = FormUser(request.POST)
+		if form.is_valid():
+			user = form.cleaned_data['name']
+			get_recommendation(user)
+			
+	else:
+		form = FormUser()
+	return render(request, 'recommendation_user.html',{'form': form})

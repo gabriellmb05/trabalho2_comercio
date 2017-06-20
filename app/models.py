@@ -48,4 +48,4 @@ class Recommendation(models.Model):
     prediction_rating = models.FloatField()
 
     def __str__(self):
-        return str(self.userid)+" "+str(self.movieid)
+        return str(self.userid)+" "+str(self.movieid)   
