@@ -41,6 +41,13 @@ class Rating(models.Model):
                 list_unwatched_movies.append(movie.movieid)
         return list_unwatched_movies
 
+    def get_watched_movies(self,userid):
+        list_watched_movies = []
+        for movie in Movie.objects.all():
+            watched = self.is_movie_watched(userid,movie.movieid)
+            if(watched):
+                list_watched_movies.append(movie)
+        return list_watched_movies
 
 class Recommendation(models.Model):
     userid = models.ForeignKey(User, related_name='user_prediction_fk')

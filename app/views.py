@@ -3,7 +3,7 @@ from .models import *
 from django.http import HttpResponse
 from math import pow,sqrt
 from .forms import *
-
+import json
 
 
 def get_rating(user_id,movie_id):
@@ -143,15 +143,46 @@ def get_recommendation(userobj):
 
 def recommendation_view(request):
 	recommended_movies=[]
+	movies = Movie.objects.all()
+	users = User.objects.all()
+	movies_of_user = dict()
+	movies_user_json = ''
+
+
+	for user in users:
+	    movie_id = []
+	    movie_name = []
+	    user_json =dict()
+	    rating = Rating()
+	    watched_movies = rating.get_watched_movies(user.userid)
+	    for movie in watched_movies:
+	            movie_id.append(movie.movieid)
+	            movie_name.append(movie.title)
+	    user_json['movie_id'] = movie_id
+	    user_json['movie_title'] = movie_name
+
+	    movies_of_user[user.userid] = user_json
+
+	movies_user_json = json.dumps(movies_of_user)
 	if request.method == "POST":
-		form = FormUser(request.POST)
-		if form.is_valid():
-			user = form.cleaned_data['name']
-			recommended_movies = get_recommendation(user)
-			return render(request, 'recommended_movies.html', {'user':user,'recommendations':recommended_movies})
+		if request.POST.get('btn-recommendation') == '1':
+			form = FormUser(request.POST)
+			if form.is_valid():
+				user = form.cleaned_data['name']
+				recommended_movies = get_recommendation(user)
+				return render(request, 'recommended_movies.html', {'user':user,'recommendations':recommended_movies})
+		elif(request.POST.get('btn-movie') == '0'):
+			form_movie = FormMovie(request.POST)
+			if form_movie.is_valid():
+				user = form_movie.cleaned_data['users']
+				movie = form_movie.cleaned_data['movies']
+				rating = get_rating(user.userid, movie.movieid)
+				return render(request, 'rating_movie.html', {'user':user,'movie':movie, 'rating':rating})
 	else:
-		form = FormUser()
-	return render(request, 'recommendation_user.html',{'form': form})
+		form_user = FormUser()
+		form_movie = FormMovie()
+	return render(request, 'recommendation_user.html',{'form': form_user, 'form_movie':form_movie, 'json':movies_user_json})
 
 def recommended_movies_user(request):
 	return render(request, 'recommended_movies_user.html')
+

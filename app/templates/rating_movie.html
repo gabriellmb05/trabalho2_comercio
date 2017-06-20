@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Filmes recomendados para o usuário{% endblock %}
+
+{% block content %}
+    <div id="content-container" class="container">
+          <h4><u>{{user}}</u> avaliou  <u>{{movie}}</u> como: {{rating}}</h4>
+          <br><br>
+          <button class="btn btn-success"><a href="/">Voltar</a></button>
+    </div>
+{% endblock content %}
