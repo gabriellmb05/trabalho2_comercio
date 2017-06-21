@@ -172,7 +172,7 @@ def recommendation_view(request):
 				recommended_movies = get_recommendation(user)
 				return render(request, 'recommended_movies.html', {'user':user,'recommendations':recommended_movies})
 		elif(request.POST.get('btn-movie') == '0'):
-			form_movie = FormMovie(request.POST)
+			form_movie = FormMovieUser(request.POST)
 			if form_movie.is_valid():
 				user = form_movie.cleaned_data['users']
 				movie = form_movie.cleaned_data['movies']
@@ -180,9 +180,45 @@ def recommendation_view(request):
 				return render(request, 'rating_movie.html', {'user':user,'movie':movie, 'rating':rating})
 	else:
 		form_user = FormUser()
-		form_movie = FormMovie()
-	return render(request, 'recommendation_user.html',{'form': form_user, 'form_movie':form_movie, 'json':movies_user_json})
+		form_movie_user = FormMovieUser()
+	return render(request, 'recommendation_user.html',{'form': form_user, 'form_movie':form_movie_user, 'json':movies_user_json})
 
 def recommended_movies_user(request):
 	return render(request, 'recommended_movies_user.html')
+
+def get_similarity_cosine_item(movie1, movie2):
+	intersection = get_intersection_user(movie1, movie2)
+
+	rating_a = []
+	rating_b = []
+	cont = 0
+	numerador = 0
+	abs_value_a = 0
+	abs_value_b = 0
+	if(bool(intersection)==True):
+		for user in intersection:
+			rating_a.append(get_rating(user,movie1.movieid))
+			rating_b.append(get_rating(user,movie2.movieid))
+			numerador += rating_a[cont]*rating_b[cont]
+			abs_value_a += pow((rating_a[cont]),2)
+			abs_value_b += pow((rating_b[cont]),2)
+			cont+=1
+		similarity = (numerador)/(sqrt(abs_value_a) * sqrt(abs_value_b))
+	else:
+		similarity=-1
+	return similarity
+
+
+
+def get_intersection_user(movie1, movie2):
+	rated_user_movie1 = list(Rating.objects.filter(movieid= movie1.movieid))
+	rated_user_movie2 = list(Rating.objects.filter(movieid= movie2.movieid))
+
+	set_rated_user_movie1 = set(rating.userid for rating in rated_user_movie1)
+	set_rated_user_movie2 = set(rating.userid for rating in rated_user_movie2)
+
+	intersection = set_rated_user_movie1.intersection(set_rated_user_movie2)
+
+	return intersection
+
 
