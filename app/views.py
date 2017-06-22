@@ -17,7 +17,6 @@ def get_avg_movie(user,set_of_movies):
 	sum_ratings=0
 	for movie in list(set_of_movies):
 		sum_ratings+=get_rating(user.userid,movie.movieid)
-
 	return sum_ratings/len(set_of_movies)
 
 def get_intersection(user_a,user_b):
@@ -44,19 +43,20 @@ def get_similarity_pearson(user_a_id,user_b_id):
 	covariance = 0
 	deviation_a = 0
 	deviation_b = 0
-
 	if(bool(intersection)==True):
+		avg_rating_user_a = get_avg_movie(user_a,intersection)
+		avg_rating_user_b = get_avg_movie(user_b,intersection)
 		for movie in intersection:
 			rating_a = get_rating(user_a,movie.movieid)
 			rating_b = get_rating(user_b,movie.movieid)
-			avg_rating_user_a = get_avg_movie(user_a,movies_a)
-			avg_rating_user_b = get_avg_movie(user_b,movies_b)
 			covariance += ((rating_a-avg_rating_user_a)*(rating_b-avg_rating_user_b))
 			deviation_a += pow((rating_a-avg_rating_user_a),2)
 			deviation_b += pow((rating_b-avg_rating_user_b),2)
-
+		print(covariance)
+		print(deviation_a)
+		print(deviation_b)
 		if(deviation_a!=0 and deviation_b!=0):
-			similarity = covariance/sqrt(deviation_a)*sqrt(deviation_b)
+			similarity = covariance/(sqrt(deviation_a)*sqrt(deviation_b))
 		else:
 			similarity = 0
 	else:
@@ -86,7 +86,7 @@ def get_similarity_cosine(user_a_id,user_b_id):
 			abs_value_a += pow((rating_a[cont]),2)
 			abs_value_b += pow((rating_b[cont]),2)
 			cont+=1
-		similarity = (numerador)/(sqrt(abs_value_a) * sqrt(abs_value_b))
+		similarity =  (numerador)/(sqrt(abs_value_a) * sqrt(abs_value_b))
 	else:
 		similarity=-1
 	return similarity
@@ -186,6 +186,17 @@ def recommendation_view(request):
 def recommended_movies_user(request):
 	return render(request, 'recommended_movies_user.html')
 
+def get_intersection_user(movie1, movie2):
+	rated_user_movie1 = list(Rating.objects.filter(movieid= movie1.movieid))
+	rated_user_movie2 = list(Rating.objects.filter(movieid= movie2.movieid))
+
+	set_rated_user_movie1 = set(rating.userid for rating in rated_user_movie1)
+	set_rated_user_movie2 = set(rating.userid for rating in rated_user_movie2)
+
+	intersection = set_rated_user_movie1.intersection(set_rated_user_movie2)
+
+	return intersection
+
 def get_similarity_cosine_item(movie1, movie2):
 	intersection = get_intersection_user(movie1, movie2)
 
@@ -208,17 +219,27 @@ def get_similarity_cosine_item(movie1, movie2):
 		similarity=-1
 	return similarity
 
+def get_prediction_item(user_id,movie_id):
 
-
-def get_intersection_user(movie1, movie2):
-	rated_user_movie1 = list(Rating.objects.filter(movieid= movie1.movieid))
-	rated_user_movie2 = list(Rating.objects.filter(movieid= movie2.movieid))
-
-	set_rated_user_movie1 = set(rating.userid for rating in rated_user_movie1)
-	set_rated_user_movie2 = set(rating.userid for rating in rated_user_movie2)
-
-	intersection = set_rated_user_movie1.intersection(set_rated_user_movie2)
-
-	return intersection
-
-
+	user_a = User.objects.get(userid=user_id)
+	rating_differences = 0
+	similarities_sum = 0
+	if (Rating.objects.filter(userid=user_id,movieid=movie_id).exists()==False):
+		movie_ratings = Rating.objects.filter(movieid=movie_id)
+		for rating in movie_ratings:
+			user_b = User.objects.get(userid=rating.userid.userid)
+			movies_b = Rating.objects.filter(userid=user_b.userid)
+			similarity_a_b = get_similarity_cosine(user_a.userid,user_b.userid)
+			intersection = get_intersection(user_a,user_b)
+			avg_rating_user_b = get_avg_movie(user_b,movies_b)
+			rating_differences += (similarity_a_b * (get_rating(user_b.userid,movie_id)- avg_rating_user_b))
+			similarities_sum += similarity_a_b
+		movies_a = 	Rating.objects.filter(userid=user_a.userid)
+		avg_rating_user_a=get_avg_movie(user_a, movies_a)
+		if(similarities_sum !=0 ):
+			prediction = avg_rating_user_a + (rating_differences/similarities_sum)
+		else:
+		 	prediction = 0
+		return prediction
+	else:
+		print("O usuário já viu o filme escolhido, por favor escolha outro.")
