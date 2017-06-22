@@ -60,17 +60,21 @@ def get_similarity_pearson(user_a_id,user_b_id):
 	covariance = 0
 	deviation_a = 0
 	deviation_b = 0
-
+	lsta = []
+	lstb = []
 	if(bool(intersection)==True):
 		avg_rating_user_a = get_avg_movie(user_a,intersection)
 		avg_rating_user_b = get_avg_movie(user_b,intersection)
 		for movie in intersection:
 			rating_a = get_rating(user_a,movie.movieid)
 			rating_b = get_rating(user_b,movie.movieid)
+			lsta.append(rating_a)
+			lstb.append(rating_b)
 			covariance += ((rating_a-avg_rating_user_a)*(rating_b-avg_rating_user_b))
 			deviation_a += pow((rating_a-avg_rating_user_a),2)
 			deviation_b += pow((rating_b-avg_rating_user_b),2)
-
+		print(lsta)
+		print(lstb)
 		if(deviation_a!=0 and deviation_b!=0):
 			similarity = covariance/(sqrt(deviation_a)*sqrt(deviation_b))
 		else:
