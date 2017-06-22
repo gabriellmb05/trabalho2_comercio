@@ -16,7 +16,7 @@ class Movie(models.Model):
         return self.title
 class Rating(models.Model):
     userid = models.ForeignKey(User, related_name='user_rating_fk')
-    movieid =models.ForeignKey(Movie, related_name='movie_rating_fk')
+    movieid = models.ForeignKey(Movie, related_name='movie_rating_fk')
     rating = models.FloatField()
 
     def __str__(self):
