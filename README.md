@@ -24,7 +24,7 @@ Instale as bibliotecas com o comando:
 
     pip install -r requirements.txt
   
-Certifique-se de que o banco "moviedb" foi criado em sua base postgres conforme explicado na seção ([Modelo Conceitual](https://github.com/gabriellmb05/trabalho2_comercio/wiki/Modelo-conceitual)) na wiki.
+Certifique-se de que o banco "moviedb" foi criado em sua base postgres conforme explicado na seção [Modelo Conceitual](https://github.com/gabriellmb05/trabalho2_comercio/wiki/Modelo-conceitual) na wiki.
  
 Para rodar o projeto execute o comando:
  
