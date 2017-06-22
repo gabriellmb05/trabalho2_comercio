@@ -8,6 +8,7 @@ Todo o processo de instalação e configuração será feito em um ambiente linu
 
 * python >= 2.7
 * virtualenv
+* postgres >= 9.5
 
 ### Configuração
 
