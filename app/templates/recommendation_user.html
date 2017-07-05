@@ -6,23 +6,6 @@
             <form id="movie-form" method="post"
                   action="{% url 'recommendation_view' %}">
                   {% csrf_token %}
-                  <script>
-                    userMovies = {{json|safe}};
-
-                    function get_whatched_movies(){
-                        $('#movies_id').find('option').remove();
-                        var id_user= $('#users_id option:selected').val();
-                        var list_movies_id = userMovies[id_user].movie_id;
-                        var list_movies_name = userMovies[id_user].movie_title;
-                        var cont = 0;
-                        for(var movie in list_movies_id){
-                            $('#movies_id').append("<option value="+list_movies_id[movie]+">"+list_movies_name[cont]+"</option>");
-                            cont++;
-                        }
-
-                        $('#movies_id').removeAttr("disabled");
-                    }
-                </script>
                 <h2>Classificação feita pelo usuário</h4>
                   {{form_movie}}
                   <div class="input-field">

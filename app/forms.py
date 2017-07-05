@@ -22,10 +22,7 @@ class FormMovieUser(forms.Form):
         super(FormMovieUser, self).__init__(*args,**kwargs)
         self.fields['users'] = forms.ModelChoiceField(required=True, queryset=User.objects.all(), widget=forms.Select())
         self.fields['movies'] = forms.ModelChoiceField(required=True, queryset=Movie.objects.all(), widget=forms.Select())
-        self.fields['users'].widget.attrs['onchange'] = 'get_whatched_movies()'
-        self.fields['users'].widget.attrs['id'] = 'users_id'
-        self.fields['movies'].widget.attrs['id'] = 'movies_id'
-        self.fields['movies'].widget.attrs['disabled'] = 'disabled'
+
 
 class FormMovie(forms.Form):
     movies = forms.CharField(label='FIlme:', max_length=100)

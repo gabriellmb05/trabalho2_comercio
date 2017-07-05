@@ -11,10 +11,36 @@ def get_rating(user_id,movie_id):
     a função retorna a classificação que o usuário fez.
     """
     try:
-        rating = Rating.objects.get(userid=user_id,movieid=movie_id)
-        return rating.rating
+        if( Rating.objects.filter(userid=user_id,movieid=movie_id).exists() == True):
+            rating = Rating.objects.get(userid=user_id,movieid=movie_id)
+            return rating.rating
+        else:
+            user = User.objects.get(pk=user_id)
+            list_users =   [rating.userid for rating in list(Rating.objects.filter(movieid=movie_id))]
+            user_b = user_highest_similarity(user, list_users)
+            print(user_b.pk)
+            print(movie_id)
+            return Rating.objects.get(userid=user_b.pk, movieid=movie_id).rating
+
     except:
         print ("Filme ou usuário inexistentes.")
+
+def user_highest_similarity(user, list_user):
+    highest_similarity= 0
+    user_end = None
+    cont = 0
+    aux = 0
+    for user_b in list_user:
+        aux = get_similarity_cosine(user.pk, user_b.pk)
+        if cont == 0:
+            user_end = user_b
+            highest_similarity = aux
+            cont+=1
+        elif(aux > highest_similarity):
+            user_end = user_b
+            highest_similarity = aux
+    return user_end
+
 
 def get_avg_movie(user,set_of_movies):
     """Dado um objeto User e uma lista de filmes a função
@@ -73,8 +99,6 @@ def get_similarity_pearson(user_a_id,user_b_id):
 			covariance += ((rating_a-avg_rating_user_a)*(rating_b-avg_rating_user_b))
 			deviation_a += pow((rating_a-avg_rating_user_a),2)
 			deviation_b += pow((rating_b-avg_rating_user_b),2)
-		print(lsta)
-		print(lstb)
 		if(deviation_a!=0 and deviation_b!=0):
 			similarity = covariance/(sqrt(deviation_a)*sqrt(deviation_b))
 		else:
@@ -96,7 +120,6 @@ def get_similarity_cosine(user_a_id,user_b_id):
     movies_b = Rating.objects.filter(userid=user_b)
 
     intersection = get_intersection(user_a,user_b)
-
     rating_a = []
     rating_b = []
     cont = 0
@@ -182,30 +205,8 @@ def get_recommendation(userobj):
     return recommendations
 
 def recommendation_view(request):
-	recommended_movies=[]
-	movies = Movie.objects.all()
-	users = User.objects.all()
-	movies_of_user = dict()
-	movies_user_json = ''
 
-
-	for user in users:
-		movie_id = []
-		movie_name = []
-		user_json =dict()
-		rating = Rating()
-		watched_movies = rating.get_watched_movies(user.userid)
-		for movie in watched_movies:
-			movie_id.append(movie.movieid)
-			movie_name.append(movie.title)
-		user_json['movie_id'] = movie_id
-		user_json['movie_title'] = movie_name
-
-		movies_of_user[user.userid] = user_json
-
-	movies_user_json = json.dumps(movies_of_user)
 	if request.method == "POST":
-		print('entrei post')
 		if request.POST.get('btn-recommendation') == '1':
 			form = FormUser(request.POST)
 			if form.is_valid():
@@ -213,7 +214,6 @@ def recommendation_view(request):
 				recommended_movies = get_recommendation(user)
 				return render(request, 'recommended_movies.html', {'user':user,'recommendations':recommended_movies})
 		elif(request.POST.get('btn-movie') == '0'):
-			print('entrei 2')
 			form_movie = FormMovieUser(request.POST)
 			if form_movie.is_valid():
 				user = form_movie.cleaned_data['users']
@@ -223,7 +223,7 @@ def recommendation_view(request):
 	else:
 		form_user = FormUser()
 		form_movie_user = FormMovieUser()
-	return render(request, 'recommendation_user.html',{'form': form_user, 'form_movie':form_movie_user, 'json':movies_user_json})
+	return render(request, 'recommendation_user.html',{'form': form_user, 'form_movie':form_movie_user})
 
 def recommended_movies_user(request):
     return render(request, 'recommended_movies_user.html')
